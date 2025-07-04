@@ -9,6 +9,8 @@ class WordleHelper {
         this.initializeElements();
         this.attachEventListeners();
         this.loadWordsAndInit();
+        this.pastWords = [];
+        this.loadWordsAndInit();
     }
 
     initializeElements() {
@@ -35,20 +37,30 @@ class WordleHelper {
             this.showLoading();
             
             // Load words from JSON file
-            const response = await fetch('words.json');
-            if (!response.ok) {
-                throw new Error(`Failed to load words: ${response.status}`);
+            const wordsResponse = await fetch('words.json');
+            if (!wordsResponse.ok) {
+                throw new Error(`Failed to load words: ${wordsResponse.status}`);
+            }
+            this.wordList = await wordsResponse.json();
+            
+            // Load past words
+            try {
+                const pastResponse = await fetch('past-words.json');
+                if (pastResponse.ok) {
+                    this.pastWords = await pastResponse.json();
+                    console.log(`Loaded ${this.pastWords.length} past words`);
+                }
+            } catch (e) {
+                console.log('No past words file found, continuing without it');
+                this.pastWords = [];
             }
             
-            this.wordList = await response.json();
             console.log(`Loaded ${this.wordList.length} words from words.json`);
-            
-            // Initialize the game with loaded words
             this.loadInitialData();
             
         } catch (error) {
             console.error('Error loading words:', error);
-            this.showError('Failed to load word database. Please check that words.json exists.');
+            this.showError('Failed to load word database.');
         }
     }
 
@@ -278,17 +290,17 @@ class WordleHelper {
     }
 
     getTopSuggestions(words, limit = 8) {
-        /**
-         * Get top word suggestions based on common letters and unique letter strategy
-         */
         const commonLetters = ['e', 'a', 'r', 'i', 'o', 't', 'n', 's', 'l', 'c', 'u', 'm', 'd', 'p', 'h'];
         
-        // Separate words with unique letters from those with repeated letters
+        // Separate words by type
         const uniqueLetterWords = [];
         const repeatedLetterWords = [];
+        const pastWords = [];
         
         for (const word of words) {
-            if (new Set(word).size === 5) {  // All letters are unique
+            if (this.pastWords.includes(word)) {
+                pastWords.push(word);
+            } else if (new Set(word).size === 5) {
                 uniqueLetterWords.push(word);
             } else {
                 repeatedLetterWords.push(word);
@@ -296,40 +308,39 @@ class WordleHelper {
         }
         
         const scoreWord = (word) => {
-            // Base score from common letters
             const commonScore = word.split('').reduce((score, letter) => 
                 score + (commonLetters.includes(letter) ? 1 : 0), 0);
-            
-            // Bonus for vowels (a, e, i, o, u)
             const vowelScore = word.split('').reduce((score, letter) => 
                 score + ('aeiou'.includes(letter) ? 1 : 0), 0);
-            
-            // Bonus for consonant diversity
             const consonants = word.split('').filter(letter => !'aeiou'.includes(letter));
             const consonantScore = new Set(consonants).size;
             
             return commonScore + (vowelScore * 0.5) + (consonantScore * 0.3);
         };
         
-        // Score and sort unique letter words first (they're strategically better)
+        // Score and sort each category
         const scoredUnique = uniqueLetterWords.map(word => ({ word, score: scoreWord(word) }));
         const scoredRepeated = repeatedLetterWords.map(word => ({ word, score: scoreWord(word) }));
+        const scoredPast = pastWords.map(word => ({ word, score: scoreWord(word) }));
         
-        // Sort both lists by score (descending)
         scoredUnique.sort((a, b) => b.score - a.score);
         scoredRepeated.sort((a, b) => b.score - a.score);
+        scoredPast.sort((a, b) => b.score - a.score);
         
-        // Prioritize unique letter words, then add repeated letter words if needed
+        // Priority: unique letters → repeated letters → past words
         const suggestions = [];
         
-        // Add unique letter words first
         for (const { word } of scoredUnique) {
             if (suggestions.length >= limit) break;
             suggestions.push(word);
         }
         
-        // Fill remaining slots with repeated letter words if needed
         for (const { word } of scoredRepeated) {
+            if (suggestions.length >= limit) break;
+            suggestions.push(word);
+        }
+        
+        for (const { word } of scoredPast) {
             if (suggestions.length >= limit) break;
             suggestions.push(word);
         }
@@ -385,15 +396,26 @@ class WordleHelper {
     }
 
     displayResults(data) {
-        // Update word count
         this.wordCount.textContent = data.total_count;
         
-        // Display suggestions with indicators for unique letter words
+        // Display suggestions
         if (data.suggestions.length > 0) {
             const suggestionsHtml = data.suggestions.map(word => {
                 const hasUniqueLetters = new Set(word).size === 5;
-                const indicator = hasUniqueLetters ? '<span class="unique-indicator">⭐</span>' : '';
-                return `<div class="suggestion-item ${hasUniqueLetters ? 'unique-letters' : ''}">${indicator}${word.toUpperCase()}</div>`;
+                const isPastWord = this.pastWords.includes(word);
+                
+                let indicator = '';
+                let extraClass = '';
+                
+                if (isPastWord) {
+                    indicator = '<span class="past-indicator">📅</span>';
+                    extraClass = 'past-word';
+                } else if (hasUniqueLetters) {
+                    indicator = '<span class="unique-indicator">⭐</span>';
+                    extraClass = 'unique-letters';
+                }
+                
+                return `<div class="suggestion-item ${extraClass}">${indicator}${word.toUpperCase()}</div>`;
             }).join('');
             
             this.suggestionsContainer.innerHTML = suggestionsHtml;
@@ -401,13 +423,15 @@ class WordleHelper {
             this.suggestionsContainer.innerHTML = '<div class="loading">No suggestions available</div>';
         }
         
-        // Display possible words (in collapsible section)
+        // Display possible words
         if (data.possible_words.length === 0) {
             this.wordsContainer.innerHTML = '<div class="error">No possible words found. Check your feedback!</div>';
         } else {
-            const wordsHtml = data.possible_words.map(word => 
-                `<div class="word-item">${word.toUpperCase()}</div>`
-            ).join('');
+            const wordsHtml = data.possible_words.map(word => {
+                const isPastWord = this.pastWords.includes(word);
+                const extraClass = isPastWord ? 'past-word' : '';
+                return `<div class="word-item ${extraClass}">${word.toUpperCase()}</div>`;
+            }).join('');
             
             let displayHtml = `<div class="word-grid">${wordsHtml}</div>`;
             
@@ -418,7 +442,6 @@ class WordleHelper {
             this.wordsContainer.innerHTML = displayHtml;
         }
         
-        // Show success state if we found a small number of words
         if (data.total_count <= 3 && data.total_count > 0) {
             this.showSuccessMessage();
         }

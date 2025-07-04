@@ -483,6 +483,23 @@ body {
     color: white;
 }
 
+/* Past words styling */
+.suggestion-item.past-word {
+    background: linear-gradient(45deg, #95a5a6, #7f8c8d) !important;
+    border: 2px solid rgba(149, 165, 166, 0.3) !important;
+}
+
+.word-item.past-word {
+    background: #ecf0f1 !important;
+    color: #7f8c8d !important;
+    border-color: #bdc3c7 !important;
+}
+
+.past-indicator {
+    font-size: 0.8rem;
+    opacity: 0.9;
+}
+
 /* Suggestions Section */
 .suggestions-section {
     padding: 20px;
