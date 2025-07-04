@@ -467,6 +467,22 @@ body {
     font-size: 1rem;
 }
 
+/* Colors for previous guesses in the "Your Guesses" section */
+.guess-letter.green {
+    background: #6aaa64;
+    color: white;
+}
+
+.guess-letter.yellow {
+    background: #c9b458;
+    color: white;
+}
+
+.guess-letter.gray {
+    background: #787c7e;
+    color: white;
+}
+
 /* Suggestions Section */
 .suggestions-section {
     padding: 20px;
@@ -721,3 +737,4 @@ body {
         grid-template-columns: repeat(5, 1fr);
     }
 }
+
