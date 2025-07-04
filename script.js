@@ -12,7 +12,7 @@ class WordleHelper {
         this.pastWords = [];
         this.loadWordsAndInit();
         this.currentPage = 1;
-        this.wordsPerPage = 32;
+        this.wordsPerPage = 30;
         this.allPossibleWords = [];
         this.startingWords = [];
     }
@@ -305,7 +305,7 @@ class WordleHelper {
         return filtered;
     }
 
-    getTopSuggestions(words, limit = 18) {
+    getTopSuggestions(words, limit = 20) {
         // First guess: use starting words list
         if (this.guesses.length === 0 && this.startingWords.length > 0) {
             return this.startingWords
@@ -391,7 +391,7 @@ class WordleHelper {
             this.currentPage = 1; // Reset to first page
             
             // Get suggestions (still limited to 8)
-            const suggestions = this.getTopSuggestions(possibleWords, 18);
+            const suggestions = this.getTopSuggestions(possibleWords, 20);
             
             const data = {
                 possible_words: possibleWords, // Don't slice here anymore
@@ -408,7 +408,7 @@ class WordleHelper {
 
     loadInitialData() {
         try {
-            const suggestions = this.getTopSuggestions(this.wordList, 18);
+            const suggestions = this.getTopSuggestions(this.wordList, 20);
             
             // Store all words for pagination
             this.allPossibleWords = [...this.wordList];
