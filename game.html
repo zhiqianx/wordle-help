@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordle Helper - Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="game-page">
+    <div class="game-container">
+        <!-- Header with back button -->
+        <header class="game-header">
+            <a href="index.html" class="back-button">← Back</a>
+            <h1>🔤 Wordle Helper</h1>
+            <button id="resetBtn" class="header-reset-btn">Reset</button>
+        </header>
+
+        <!-- Input Section -->
+        <div class="input-section">
+            <div class="input-title">
+                <h2>Enter Your Guess</h2>
+                <div class="guess-counter">Guess <span id="guessNumber">1</span></div>
+            </div>
+            
+            <div class="guess-input">
+                <input type="text" id="guessInput" placeholder="5-letter word" maxlength="5" autocomplete="off">
+            </div>
+
+            <div class="feedback-grid" id="feedbackGrid">
+                <div class="feedback-cell" data-index="0"></div>
+                <div class="feedback-cell" data-index="1"></div>
+                <div class="feedback-cell" data-index="2"></div>
+                <div class="feedback-cell" data-index="3"></div>
+                <div class="feedback-cell" data-index="4"></div>
+            </div>
+
+            <div class="feedback-legend">
+                <div class="legend-item">
+                    <div class="legend-box green"></div>
+                    <span>Correct</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box yellow"></div>
+                    <span>Wrong spot</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box gray"></div>
+                    <span>Not in word</span>
+                </div>
+            </div>
+
+            <button id="addGuessBtn" class="add-guess-btn" disabled>Add Guess</button>
+        </div>
+
+        <!-- Previous Guesses -->
+        <div class="guesses-section" id="guessesSection" style="display: none;">
+            <h3>Your Guesses</h3>
+            <div id="guessesList" class="guesses-list"></div>
+        </div>
+
+        <!-- Suggestions Section -->
+        <div class="suggestions-section">
+            <h3>Smart Suggestions (<span id="wordCount">0</span> possible)</h3>
+            <p class="suggestions-subtitle">Words with unique letters shown first for better strategy</p>
+            <div id="suggestionsContainer" class="suggestions-container">
+                <div class="loading">Loading suggestions...</div>
+            </div>
+        </div>
+
+        <!-- Possible Words Section (Collapsible) -->
+        <div class="possible-words-section">
+            <button class="toggle-words-btn" id="toggleWordsBtn">
+                <span>Show All Possible Words</span>
+                <span class="toggle-icon">▼</span>
+            </button>
+            <div id="wordsContainer" class="words-container" style="display: none;">
+                <div class="loading">Loading words...</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <button id="quickResetBtn" class="quick-action-btn">
+                <span class="action-icon">🔄</span>
+                <span>New Game</span>
+            </button>
+            <a href="index.html" class="quick-action-btn">
+                <span class="action-icon">🏠</span>
+                <span>Home</span>
+            </a>
+        </div>
+
+        <!-- Help Section (Collapsible) -->
+        <div class="help-section">
+            <button class="toggle-help-btn" id="toggleHelpBtn">
+                <span>How to Use</span>
+                <span class="toggle-icon">▼</span>
+            </button>
+            <div id="helpContent" class="help-content" style="display: none;">
+                <div class="help-steps">
+                    <div class="help-step">
+                        <div class="step-number">1</div>
+                        <div class="step-text">Type your 5-letter Wordle guess</div>
+                    </div>
+                    <div class="help-step">
+                        <div class="step-number">2</div>
+                        <div class="step-text">Tap each letter to match Wordle's colors</div>
+                    </div>
+                    <div class="help-step">
+                        <div class="step-number">3</div>
+                        <div class="step-text">Tap "Add Guess" to filter words</div>
+                    </div>
+                    <div class="help-step">
+                        <div class="step-number">4</div>
+                        <div class="step-text">Pick from smart suggestions (⭐ = unique letters for better strategy)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
