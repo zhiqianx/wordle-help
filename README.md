@@ -17,6 +17,7 @@ A powerful, mobile-first web application that helps you solve Wordle puzzles fas
 - **Accurate logic** implementing Wordle's exact rules for green, yellow, and gray feedback
 
 ### 💡 Strategic Suggestions
+- **🚀 Popular starting words**: Words that most players like to start with
 - **⭐ Unique letter priority**: Words with 5 different letters shown first (optimal strategy)
 - **📅 Past word detection**: Previously used Wordle answers get lower priority  
 - **Common letter scoring**: Ranks words by frequency of common English letters
@@ -52,10 +53,14 @@ A powerful, mobile-first web application that helps you solve Wordle puzzles fas
 2. **Start a local server**
    ```bash
    # Python 3
-   python -m http.server 8000
+   python3 -m http.server 8000
+   ```
+   or
+   ```bash
+   python3 serve_verbose.py
    ```
 
-3. **Open in browser**
+4. **Open in browser**
    ```
    http://localhost:8000
    ```
@@ -70,6 +75,8 @@ wordle-helper/
 ├── script.js               # Game logic and word filtering
 ├── words.json              # Complete Wordle word database
 ├── past-words.json         # Previously used Wordle answers
+├── starting-words.json     # Popular Wordle starting words
+├── serve_verbose.py        # Python script to run with more log msg
 └── README.md               # This file
 ```
 
@@ -159,6 +166,17 @@ Modify `past-words.json` with historical answers:
   "adieu",
   "audio",
   "crane",
+  "..."
+]
+```
+
+### Modifying Starting Words
+Modify `starting-words.json` with starting guess:
+```json
+[
+  "adieu",
+  "stare",
+  "slate",
   "..."
 ]
 ```
