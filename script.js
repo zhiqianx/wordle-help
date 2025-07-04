@@ -161,7 +161,7 @@ class WordleHelper {
         this.validateInput();
         
         // Filter words
-        this.filterWords();
+        this.updateWordList();
         
         // Add success haptic feedback
         if (navigator.vibrate) {
@@ -337,7 +337,7 @@ class WordleHelper {
         return suggestions;
     }
 
-    filterWords() {
+    updateWordList() {
         try {
             // Start with all words
             let possibleWords = [...this.wordList];
