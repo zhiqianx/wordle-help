@@ -11,6 +11,10 @@ class WordleHelper {
         this.loadWordsAndInit();
         this.pastWords = [];
         this.loadWordsAndInit();
+        this.currentPage = 1;
+        this.wordsPerPage = 32;
+        this.allPossibleWords = [];
+        this.startingWords = [];
     }
 
     initializeElements() {
@@ -42,6 +46,18 @@ class WordleHelper {
                 throw new Error(`Failed to load words: ${wordsResponse.status}`);
             }
             this.wordList = await wordsResponse.json();
+
+            // Load starting words
+            try {
+                const startingResponse = await fetch('starting-words.json');
+                if (startingResponse.ok) {
+                    this.startingWords = await startingResponse.json();
+                    console.log(`Loaded ${this.startingWords.length} starting words`);
+                }
+            } catch (e) {
+                console.log('No starting words file found');
+                this.startingWords = [];
+            }
             
             // Load past words
             try {
@@ -101,7 +117,7 @@ class WordleHelper {
         // Suggestion click handling
         this.suggestionsContainer.addEventListener('click', (e) => {
             if (e.target.classList.contains('suggestion-item')) {
-                const word = e.target.textContent.replace('⭐', '').trim().toLowerCase();
+                const word = e.target.textContent.replace('⭐', '').replace('📅', '').replace('🚀', '').trim().toLowerCase();
                 this.selectSuggestion(word);
             }
         });
@@ -289,7 +305,15 @@ class WordleHelper {
         return filtered;
     }
 
-    getTopSuggestions(words, limit = 8) {
+    getTopSuggestions(words, limit = 18) {
+        // First guess: use starting words list
+        if (this.guesses.length === 0 && this.startingWords.length > 0) {
+            return this.startingWords
+                .filter(word => words.includes(word)) // Only show if word is in possible words
+                .slice(0, limit);
+        }
+        
+        // After first guess: use smart filtering
         const commonLetters = ['e', 'a', 'r', 'i', 'o', 't', 'n', 's', 'l', 'c', 'u', 'm', 'd', 'p', 'h'];
         
         // Separate words by type
@@ -362,11 +386,15 @@ class WordleHelper {
                 }
             }
             
-            // Get suggestions
-            const suggestions = this.getTopSuggestions(possibleWords, 8);
+            // Store all possible words for pagination
+            this.allPossibleWords = possibleWords;
+            this.currentPage = 1; // Reset to first page
+            
+            // Get suggestions (still limited to 8)
+            const suggestions = this.getTopSuggestions(possibleWords, 18);
             
             const data = {
-                possible_words: possibleWords.slice(0, 30),  // Limit for mobile
+                possible_words: possibleWords, // Don't slice here anymore
                 total_count: possibleWords.length,
                 suggestions: suggestions
             };
@@ -380,10 +408,14 @@ class WordleHelper {
 
     loadInitialData() {
         try {
-            const suggestions = this.getTopSuggestions(this.wordList, 8);
+            const suggestions = this.getTopSuggestions(this.wordList, 18);
+            
+            // Store all words for pagination
+            this.allPossibleWords = [...this.wordList];
+            this.currentPage = 1;
             
             const data = {
-                possible_words: this.wordList.slice(0, 30),
+                possible_words: this.wordList, // Don't slice here
                 total_count: this.wordList.length,
                 suggestions: suggestions
             };
@@ -396,18 +428,23 @@ class WordleHelper {
     }
 
     displayResults(data) {
+        // Update word count
         this.wordCount.textContent = data.total_count;
         
-        // Display suggestions
+        // Display suggestions (unchanged)
         if (data.suggestions.length > 0) {
             const suggestionsHtml = data.suggestions.map(word => {
                 const hasUniqueLetters = new Set(word).size === 5;
                 const isPastWord = this.pastWords.includes(word);
+                const isStartingWord = this.startingWords.includes(word) && this.guesses.length === 0;
                 
                 let indicator = '';
                 let extraClass = '';
                 
-                if (isPastWord) {
+                if (isStartingWord) {
+                    indicator = '<span class="starting-indicator">🚀</span>';
+                    extraClass = 'starting-word';
+                } else if (isPastWord) {
                     indicator = '<span class="past-indicator">📅</span>';
                     extraClass = 'past-word';
                 } else if (hasUniqueLetters) {
@@ -415,7 +452,7 @@ class WordleHelper {
                     extraClass = 'unique-letters';
                 }
                 
-                return `<div class="suggestion-item ${extraClass}">${indicator}${word.toUpperCase()}</div>`;
+                return `<div class="suggestion-item ${extraClass}">${word.toUpperCase()}${indicator}</div>`;
             }).join('');
             
             this.suggestionsContainer.innerHTML = suggestionsHtml;
@@ -423,28 +460,130 @@ class WordleHelper {
             this.suggestionsContainer.innerHTML = '<div class="loading">No suggestions available</div>';
         }
         
-        // Display possible words
-        if (data.possible_words.length === 0) {
-            this.wordsContainer.innerHTML = '<div class="error">No possible words found. Check your feedback!</div>';
-        } else {
-            const wordsHtml = data.possible_words.map(word => {
-                const isPastWord = this.pastWords.includes(word);
-                const extraClass = isPastWord ? 'past-word' : '';
-                return `<div class="word-item ${extraClass}">${word.toUpperCase()}</div>`;
-            }).join('');
-            
-            let displayHtml = `<div class="word-grid">${wordsHtml}</div>`;
-            
-            if (data.total_count > 30) {
-                displayHtml = `<p style="margin-bottom: 15px; color: #666; font-size: 0.9rem;">Showing first 30 of ${data.total_count} words</p>` + displayHtml;
-            }
-            
-            this.wordsContainer.innerHTML = displayHtml;
-        }
+        // Display paginated possible words
+        this.displayPaginatedWords();
         
+        // Show success state if we found a small number of words
         if (data.total_count <= 3 && data.total_count > 0) {
             this.showSuccessMessage();
         }
+    }
+
+    displayPaginatedWords() {
+        if (this.allPossibleWords.length === 0) {
+            this.wordsContainer.innerHTML = '<div class="error">No possible words found. Check your feedback!</div>';
+            return;
+        }
+        
+        const totalPages = Math.ceil(this.allPossibleWords.length / this.wordsPerPage);
+        const startIndex = (this.currentPage - 1) * this.wordsPerPage;
+        const endIndex = startIndex + this.wordsPerPage;
+        const currentWords = this.allPossibleWords.slice(startIndex, endIndex);
+        
+        const wordsHtml = currentWords.map(word => {
+            const isPastWord = this.pastWords.includes(word);
+            const extraClass = isPastWord ? 'past-word' : '';
+            return `<div class="word-item ${extraClass}">${word.toUpperCase()}</div>`;
+        }).join('');
+        
+        let displayHtml = '';
+        
+        // Page info
+        if (totalPages > 1) {
+            displayHtml += `
+                <div class="pagination-info">
+                    <span>Page ${this.currentPage} of ${totalPages}</span>
+                    <span>(${startIndex + 1}-${Math.min(endIndex, this.allPossibleWords.length)} of ${this.allPossibleWords.length} words)</span>
+                </div>
+            `;
+        }
+        
+        // Words grid
+        displayHtml += `<div class="word-grid">${wordsHtml}</div>`;
+        
+        // Pagination controls
+        if (totalPages > 1) {
+            displayHtml += `
+                <div class="pagination-controls">
+                    <button id="prevPageBtn" ${this.currentPage === 1 ? 'disabled' : ''}>
+                        ← Previous
+                    </button>
+                    <span class="page-numbers">
+                        ${this.generatePageNumbers(totalPages)}
+                    </span>
+                    <button id="nextPageBtn" ${this.currentPage === totalPages ? 'disabled' : ''}>
+                        Next →
+                    </button>
+                </div>
+            `;
+        }
+        
+        this.wordsContainer.innerHTML = displayHtml;
+        
+        // Attach pagination event listeners
+        if (totalPages > 1) {
+            this.attachPaginationListeners();
+        }
+    }
+
+    generatePageNumbers(totalPages) {
+        let pages = '';
+        const maxVisible = 5;
+        let start = Math.max(1, this.currentPage - 2);
+        let end = Math.min(totalPages, start + maxVisible - 1);
+        
+        if (end - start < maxVisible - 1) {
+            start = Math.max(1, end - maxVisible + 1);
+        }
+        
+        if (start > 1) {
+            pages += '<button class="page-btn" data-page="1">1</button>';
+            if (start > 2) pages += '<span class="page-dots">...</span>';
+        }
+        
+        for (let i = start; i <= end; i++) {
+            const active = i === this.currentPage ? 'active' : '';
+            pages += `<button class="page-btn ${active}" data-page="${i}">${i}</button>`;
+        }
+        
+        if (end < totalPages) {
+            if (end < totalPages - 1) pages += '<span class="page-dots">...</span>';
+            pages += `<button class="page-btn" data-page="${totalPages}">${totalPages}</button>`;
+        }
+        
+        return pages;
+    }
+    
+    attachPaginationListeners() {
+        const prevBtn = document.getElementById('prevPageBtn');
+        const nextBtn = document.getElementById('nextPageBtn');
+        const pageButtons = document.querySelectorAll('.page-btn');
+        
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                if (this.currentPage > 1) {
+                    this.currentPage--;
+                    this.displayPaginatedWords();
+                }
+            });
+        }
+        
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                const totalPages = Math.ceil(this.allPossibleWords.length / this.wordsPerPage);
+                if (this.currentPage < totalPages) {
+                    this.currentPage++;
+                    this.displayPaginatedWords();
+                }
+            });
+        }
+        
+        pageButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.currentPage = parseInt(btn.dataset.page);
+                this.displayPaginatedWords();
+            });
+        });
     }
 
     showSuccessMessage() {
@@ -535,6 +674,7 @@ class WordleHelper {
         
         // Focus input
         this.guessInput.focus();
+        this.currentPage = 1;
     }
 }
 
