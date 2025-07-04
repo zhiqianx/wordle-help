@@ -707,6 +707,111 @@ body {
     text-align: center;
 }
 
+/* Pagination styles */
+.pagination-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    color: #666;
+    padding: 0 5px;
+}
+
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.pagination-controls button {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+}
+
+.pagination-controls button:hover:not(:disabled) {
+    background: #f0f0f0;
+}
+
+.pagination-controls button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.page-numbers {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.page-btn {
+    width: 35px;
+    height: 35px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.page-btn.active {
+    background: #667eea !important;
+    color: white !important;
+    border-color: #667eea !important;
+}
+
+.page-dots {
+    padding: 0 5px;
+    color: #999;
+}
+
+.suggestion-item.starting-word {
+    background: linear-gradient(45deg, #ffaa43, #f8983f) !important;
+    border: 2px solid rgba(231, 76, 60, 0.3) !important;
+}
+
+.starting-indicator {
+    font-size: 0.8rem;
+    opacity: 0.9;
+}
+
+@media (max-width: 480px) {
+    .pagination-info {
+        flex-direction: column;
+        gap: 5px;
+        text-align: center;
+    }
+    
+    .pagination-controls {
+        gap: 5px;
+    }
+    
+    .page-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .pagination-controls {
+        gap: 4px;
+    }
+    
+    .pagination-btn {
+        padding: 6px 8px;
+        font-size: 0.8rem;
+        min-width: 32px;
+    }
+}
+
 /* Responsive Design for larger screens */
 @media (min-width: 768px) {
     .game-container {
