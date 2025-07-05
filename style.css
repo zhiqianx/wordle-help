@@ -389,6 +389,14 @@ body {
     font-size: 0.9rem;
 }
 
+.color-subtitle {
+    text-align: center;
+    font-size: 1rem;
+    font-style: italic;
+    color: #878585;
+    margin-bottom: 15px;
+  }
+
 .legend-item {
     display: flex;
     align-items: center;
