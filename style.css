@@ -790,6 +790,93 @@ body {
     opacity: 0.9;
 }
 
+.guess-letter.green {
+    background: #6aaa64 !important;
+    color: white !important;
+}
+
+.guess-letter.yellow {
+    background: #c9b458 !important;
+    color: white !important;
+}
+
+.guess-letter.gray {
+    background: #787c7e !important;
+    color: white !important;
+}
+
+/* Past words styling */
+.suggestion-item.past-word {
+    background: linear-gradient(45deg, #95a5a6, #7f8c8d) !important;
+    border: 2px solid rgba(149, 165, 166, 0.3) !important;
+}
+
+.word-item.past-word {
+    background: #ecf0f1 !important;
+    color: #7f8c8d !important;
+    border-color: #bdc3c7 !important;
+}
+
+.past-indicator {
+    font-size: 0.8rem;
+    opacity: 0.9;
+}
+
+/* Delete last guess button */
+.delete-last-btn {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.delete-last-btn:hover {
+    background: #c0392b;
+}
+
+.delete-last-btn:active {
+    transform: scale(0.95);
+}
+
+/* Word validation styling */
+.validation-message {
+    background: #fdf2f2;
+    color: #e74c3c;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+    text-align: center;
+    border: 1px solid #fadbd8;
+    font-size: 0.9rem;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Input validation colors */
+#guessInput.invalid {
+    border-color: #e74c3c !important;
+    background: #fdf2f2 !important;
+}
+
+#guessInput.valid {
+    border-color: #27ae60 !important;
+    background: #f8fff8 !important;
+}
+
 @media (max-width: 480px) {
     .pagination-info {
         flex-direction: column;

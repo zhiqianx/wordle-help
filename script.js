@@ -84,6 +84,16 @@ class WordleHelper {
         // Guess input handling
         this.guessInput.addEventListener('input', (e) => {
             e.target.value = e.target.value.toUpperCase().replace(/[^A-Z]/g, '');
+            
+            // Show validation for complete words
+            if (e.target.value.length === 5) {
+                const isValid = this.wordList.includes(e.target.value.toLowerCase());
+                this.showWordValidation(isValid, e.target.value);
+            } else {
+                // Clear validation message for incomplete words
+                this.showWordValidation(true);
+            }
+            
             this.updateFeedbackGrid();
             this.validateInput();
         });
@@ -152,8 +162,18 @@ class WordleHelper {
         const guess = this.guessInput.value;
         const hasValidLength = guess.length === 5;
         const hasAllFeedback = this.currentFeedback.every(f => f !== '');
+        const isValidWord = this.wordList.includes(guess.toLowerCase());
         
-        this.addGuessBtn.disabled = !(hasValidLength && hasAllFeedback);
+        // Show validation feedback
+        if (hasValidLength && !isValidWord) {
+            this.guessInput.style.borderColor = '#e74c3c';
+            this.guessInput.style.backgroundColor = '#fdf2f2';
+        } else {
+            this.guessInput.style.borderColor = hasValidLength ? '#27ae60' : '#ddd';
+            this.guessInput.style.backgroundColor = hasValidLength ? '#f8fff8' : '#f8f9fa';
+        }
+        
+        this.addGuessBtn.disabled = !(hasValidLength && hasAllFeedback && isValidWord);
     }
 
     selectSuggestion(word) {
@@ -175,6 +195,13 @@ class WordleHelper {
         const word = this.guessInput.value.toLowerCase();
         const feedback = [...this.currentFeedback];
         
+        // Validate word exists in word list
+        if (!this.wordList.includes(word)) {
+            alert(`"${word.toUpperCase()}" is not a valid Wordle word. Please try another word.`);
+            this.guessInput.focus();
+            return;
+        }
+        
         // Add guess to list
         this.guesses.push({ word, feedback });
         
@@ -194,6 +221,28 @@ class WordleHelper {
         // Add success haptic feedback
         if (navigator.vibrate) {
             navigator.vibrate([100, 50, 100]);
+        }
+    }
+
+    showWordValidation(isValid, word = '') {
+        const inputSection = document.querySelector('.input-section');
+        
+        // Remove existing validation message
+        const existingMsg = document.querySelector('.validation-message');
+        if (existingMsg) existingMsg.remove();
+        
+        if (!isValid && word) {
+            const validationMsg = document.createElement('div');
+            validationMsg.className = 'validation-message';
+            validationMsg.innerHTML = `❌ "${word.toUpperCase()}" is not a valid Wordle word`;
+            inputSection.appendChild(validationMsg);
+            
+            // Remove message after 3 seconds
+            setTimeout(() => {
+                if (validationMsg.parentNode) {
+                    validationMsg.remove();
+                }
+            }, 3000);
         }
     }
 
