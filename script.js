@@ -176,6 +176,63 @@ class WordleHelper {
         this.addGuessBtn.disabled = !(hasValidLength && hasAllFeedback && isValidWord);
     }
 
+    validateGuessConflicts(newWord, newFeedback) {
+        const conflicts = [];
+        
+        for (let i = 0; i < this.guesses.length; i++) {
+            const prevGuess = this.guesses[i];
+            const prevWord = prevGuess.word;
+            const prevFeedback = prevGuess.feedback;
+            
+            // Check each letter in the new guess
+            for (let pos = 0; pos < 5; pos++) {
+                const newLetter = newWord[pos];
+                const newStatus = newFeedback[pos];
+                
+                // Check against each letter in previous guesses
+                for (let prevPos = 0; prevPos < 5; prevPos++) {
+                    const prevLetter = prevWord[prevPos];
+                    const prevStatus = prevFeedback[prevPos];
+                    
+                    if (newLetter === prevLetter) {
+                        // Conflict 1: Letter was gray before, now it's yellow/green
+                        if (prevStatus === 'gray' && (newStatus === 'yellow' || newStatus === 'green')) {
+                            conflicts.push({
+                                type: 'gray_to_color',
+                                letter: newLetter.toUpperCase(),
+                                prevGuess: i + 1,
+                                message: `"${newLetter.toUpperCase()}" was marked as NOT in word (gray) in guess ${i + 1}, but now it's marked as in the word.`
+                            });
+                        }
+                        
+                        // Conflict 2: Letter was yellow/green before, now it's gray
+                        if ((prevStatus === 'yellow' || prevStatus === 'green') && newStatus === 'gray') {
+                            conflicts.push({
+                                type: 'color_to_gray',
+                                letter: newLetter.toUpperCase(),
+                                prevGuess: i + 1,
+                                message: `"${newLetter.toUpperCase()}" was marked as in the word in guess ${i + 1}, but now it's marked as NOT in word (gray).`
+                            });
+                        }
+                        
+                        // Conflict 3: Same position, different green status
+                        if (pos === prevPos && prevStatus === 'green' && newStatus !== 'green') {
+                            conflicts.push({
+                                type: 'green_position',
+                                letter: newLetter.toUpperCase(),
+                                position: pos + 1,
+                                prevGuess: i + 1,
+                                message: `"${newLetter.toUpperCase()}" was marked as correct position (green) in guess ${i + 1}, but now it's different.`
+                            });
+                        }
+                    }
+                }
+            }
+        }
+        
+        return conflicts;
+    }
+
     selectSuggestion(word) {
         this.guessInput.value = word.toUpperCase();
         this.updateFeedbackGrid();
@@ -199,6 +256,14 @@ class WordleHelper {
         if (!this.wordList.includes(word)) {
             alert(`"${word.toUpperCase()}" is not a valid Wordle word. Please try another word.`);
             this.guessInput.focus();
+            return;
+        }
+
+        // Check for conflicts
+        const conflicts = this.validateGuessConflicts(word, feedback);
+        
+        if (conflicts.length > 0) {
+            this.showConflictWarning(conflicts, word, feedback);
             return;
         }
         
@@ -243,6 +308,138 @@ class WordleHelper {
                     validationMsg.remove();
                 }
             }, 3000);
+        }
+    }
+
+    showConflictWarning(conflicts, word, feedback) {
+        // Create modal overlay
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease-out;
+        `;
+        
+        // Create modal content
+        const modalContent = document.createElement('div');
+        modalContent.style.cssText = `
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            animation: slideUp 0.3s ease-out;
+        `;
+        
+        const conflictMessages = conflicts.map(conflict => 
+            `<div style="margin: 10px 0; padding: 12px; background: #fee; border-radius: 8px; text-align: left;">
+                <strong>⚠️ ${conflict.letter}:</strong><br>
+                <span style="font-size: 0.9rem; color: #666;">${conflict.message}</span>
+            </div>`
+        ).join('');
+        
+        modalContent.innerHTML = `
+            <div style="font-size: 2rem; margin-bottom: 15px;">🚨</div>
+            <h3 style="color: #e74c3c; margin-bottom: 15px;">Guess Conflict Detected!</h3>
+            <p style="margin-bottom: 20px; color: #666;">Your guess conflicts with previous feedback:</p>
+            
+            <div style="margin: 20px 0;">
+                ${conflictMessages}
+            </div>
+            
+            <p style="margin: 20px 0; font-size: 0.9rem; color: #666;">
+                Please check your colors or delete previous guesses if needed.
+            </p>
+            
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button id="dismissConflict" style="
+                    padding: 12px 24px;
+                    background: #3498db;
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-size: 1rem;
+                    font-weight: 500;
+                ">Fix Colors</button>
+                
+                <button id="addAnyway" style="
+                    padding: 12px 24px;
+                    background: #e74c3c;
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-size: 1rem;
+                    font-weight: 500;
+                ">Add Anyway</button>
+            </div>
+        `;
+        
+        modal.appendChild(modalContent);
+        document.body.appendChild(modal);
+        
+        // Add animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            @keyframes slideUp {
+                from { opacity: 0; transform: translateY(30px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Event listeners
+        document.getElementById('dismissConflict').addEventListener('click', () => {
+            modal.remove();
+            style.remove();
+        });
+        
+        document.getElementById('addAnyway').addEventListener('click', () => {
+            modal.remove();
+            style.remove();
+            
+            // Force add the guess
+            this.guesses.push({ word, feedback });
+            this.updateGuessesDisplay();
+            this.updateGuessCounter();
+            this.guessInput.value = '';
+            this.currentFeedback = ['', '', '', '', ''];
+            this.clearFeedbackGrid();
+            this.validateInput();
+            this.updateWordList();
+            
+            if (navigator.vibrate) {
+                navigator.vibrate([100, 50, 100]);
+            }
+        });
+        
+        // Close on overlay click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.remove();
+                style.remove();
+            }
+        });
+        
+        // Haptic feedback for warning
+        if (navigator.vibrate) {
+            navigator.vibrate([200, 100, 200]);
         }
     }
 

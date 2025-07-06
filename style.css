@@ -855,6 +855,21 @@ body {
     animation: slideIn 0.3s ease-out;
 }
 
+.conflict-warning {
+    background: #ffe6e6;
+    border: 2px solid #ff6b6b;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 15px;
+    color: #d63031;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.conflict-warning strong {
+    color: #c0392b;
+}
+
 @keyframes slideIn {
     from {
         opacity: 0;
