@@ -233,6 +233,25 @@ class WordleHelper {
         return conflicts;
     }
 
+    checkAllGuessesForConflicts() {
+        const allConflicts = [];
+        
+        for (let i = 0; i < this.guesses.length; i++) {
+            for (let j = i + 1; j < this.guesses.length; j++) {
+                const conflict = this.validateGuessConflicts(
+                    this.guesses[i].word, this.guesses[i].feedback,
+                    this.guesses[j].word, this.guesses[j].feedback
+                );
+                
+                if (conflict) {
+                    allConflicts.push(`Guess ${i + 1} vs Guess ${j + 1}: ${conflict}`);
+                }
+            }
+        }
+        
+        return allConflicts;
+    }
+
     selectSuggestion(word) {
         this.guessInput.value = word.toUpperCase();
         this.updateFeedbackGrid();
@@ -460,6 +479,91 @@ class WordleHelper {
             
             return `<div class="guess-row">${letters}</div>`;
         }).join('');
+
+        // Add delete button if there are guesses
+        if (this.guesses.length > 0) {
+            this.guessesList.innerHTML += `
+                <div style="text-align: center; margin-top: 15px;">
+                    <button id="deleteLastBtn" class="delete-last-btn">
+                        🗑️ Delete Last Guess
+                    </button>
+                </div>
+            `;
+            
+            // Add event listener for delete button
+            const deleteBtn = document.getElementById('deleteLastBtn');
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', () => this.deleteLastGuess());
+            }
+        }
+    }
+
+    deleteLastGuess() {
+        if (this.guesses.length === 0) return;
+        
+        // Show custom confirmation modal
+        this.showDeleteConfirmation();
+    }
+    
+    showDeleteConfirmation() {
+        // Create modal overlay
+        const modal = document.createElement('div');
+        modal.className = 'delete-modal-overlay';
+        modal.innerHTML = `
+            <div class="delete-modal">
+                <div class="delete-modal-header">
+                    <h3>🗑️ Delete Last Guess</h3>
+                </div>
+                <div class="delete-modal-body">
+                    <p>Are you sure you want to delete your last guess?</p>
+                    <div class="last-guess-preview">
+                        ${this.guesses[this.guesses.length - 1].word.split('').map((letter, index) => {
+                            const feedbackClass = this.guesses[this.guesses.length - 1].feedback[index];
+                            return `<div class="preview-letter ${feedbackClass}">${letter.toUpperCase()}</div>`;
+                        }).join('')}
+                    </div>
+                    <p class="delete-warning">This action cannot be undone.</p>
+                </div>
+                <div class="delete-modal-actions">
+                    <button class="cancel-btn" id="cancelDelete">Cancel</button>
+                    <button class="delete-btn" id="confirmDelete">Delete</button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Add event listeners
+        document.getElementById('cancelDelete').addEventListener('click', () => {
+            document.body.removeChild(modal);
+        });
+        
+        document.getElementById('confirmDelete').addEventListener('click', () => {
+            // Perform the deletion
+            this.guesses.pop();
+            this.updateGuessCounter();
+            this.updateGuessesDisplay();
+            
+            if (this.guesses.length === 0) {
+                this.guessesSection.style.display = 'none';
+            }
+            
+            this.updateWordList();
+            
+            if (navigator.vibrate) {
+                navigator.vibrate(200);
+            }
+            
+            // Remove modal
+            document.body.removeChild(modal);
+        });
+        
+        // Close on background click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                document.body.removeChild(modal);
+            }
+        });
     }
 
     clearFeedbackGrid() {
