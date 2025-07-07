@@ -242,7 +242,7 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## 🙏 Credits
 
-- **Word database**: Compiled from various Wordle word sources
+- **Word database**: Compiled from various Wordle word sources, especially thanks to [Draco](https://gist.github.com/dracos)'s [valid-wordle-words](https://gist.github.com/dracos/dd0668f281e685bad51479e5acaadb93)
 - **Game concept**: Inspired by the original Wordle by Josh Wardle
 - **Icons**: Emoji characters for cross-platform compatibility
 - **Design inspiration**: Modern mobile app design patterns
