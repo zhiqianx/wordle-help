@@ -510,11 +510,6 @@ body {
     border-color: #bdc3c7 !important;
 }
 
-.past-indicator {
-    font-size: 0.8rem;
-    opacity: 0.9;
-}
-
 /* Suggestions Section */
 .suggestions-section {
     padding: 20px;
@@ -564,11 +559,6 @@ body {
 .suggestion-item.unique-letters {
     background: linear-gradient(45deg, #27ae60, #2ecc71);
     border: 2px solid rgba(255, 215, 0, 0.3);
-}
-
-.unique-indicator {
-    font-size: 0.8rem;
-    opacity: 0.9;
 }
 
 .suggestion-item:active {
@@ -790,11 +780,6 @@ body {
 .suggestion-item.starting-word {
     background: linear-gradient(45deg, #ffaa43, #f8983f) !important;
     border: 2px solid rgba(231, 76, 60, 0.3) !important;
-}
-
-.starting-indicator {
-    font-size: 0.8rem;
-    opacity: 0.9;
 }
 
 /* Delete last guess button */
@@ -1428,5 +1413,408 @@ body {
     .suggestions-section,
     .quick-actions {
         padding: 24px 18px;
+    }
+}
+
+/* ============ WORDLE TILE ICON SYSTEM ============ */
+.wordle-icon {
+    display: block;
+    width: 1em;
+    height: 1em;
+    overflow: visible;
+}
+
+.feature-icon {
+    display: inline-flex;
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    align-items: center;
+    justify-content: center;
+}
+
+.feature-icon .wordle-icon {
+    width: 48px;
+    height: 48px;
+    filter: drop-shadow(0 3px 0 rgba(26, 26, 27, 0.12));
+}
+
+.action-icon {
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-icon .wordle-icon {
+    width: 40px;
+    height: 40px;
+    transition: transform 160ms ease;
+}
+
+.quick-action-btn:hover .action-icon .wordle-icon {
+    transform: translateY(-2px);
+}
+
+.suggestion-indicator {
+    display: inline-flex;
+    width: 21px;
+    height: 21px;
+    flex: 0 0 21px;
+    align-items: center;
+    justify-content: center;
+}
+
+.suggestion-indicator .wordle-icon {
+    width: 21px;
+    height: 21px;
+    filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.2));
+}
+
+.suggestion-key {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    align-items: center;
+}
+
+.suggestion-key > span:not(:first-child) {
+    display: inline-flex;
+    gap: 5px;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.suggestion-key .wordle-icon {
+    width: 20px;
+    height: 20px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .action-icon .wordle-icon {
+        transition: none;
+    }
+}
+
+/* ============ RESPONSIVE PAGE LAYOUTS ============ */
+/* Small phones and mobile browsers */
+@media (max-width: 560px) {
+    .landing-page {
+        min-height: 100svh;
+        padding: 0;
+    }
+
+    .landing-container {
+        min-height: 100svh;
+        padding: 24px 18px 32px;
+    }
+
+    .hero-section .logo img {
+        height: 3.5rem !important;
+    }
+
+    .hero-title {
+        margin-bottom: 6px;
+        font-size: clamp(2rem, 12vw, 2.75rem);
+    }
+
+    .hero-subtitle {
+        margin-bottom: 20px;
+        font-size: 1rem;
+    }
+
+    .features {
+        gap: 8px;
+        margin: 20px 0;
+    }
+
+    .feature {
+        min-height: 68px;
+    }
+
+    .feature-icon,
+    .feature-icon .wordle-icon {
+        width: 42px;
+        height: 42px;
+        min-width: 42px;
+    }
+
+    .start-button {
+        width: min(100%, 280px);
+        margin: 18px 0;
+        padding: 14px 24px;
+    }
+
+    .instructions-preview {
+        margin-top: 18px;
+        padding: 16px;
+    }
+
+    .demo-section {
+        margin-top: 24px;
+        padding-top: 24px;
+    }
+
+    .game-page {
+        min-height: 100svh;
+    }
+
+    .game-container {
+        width: 100%;
+        min-height: 100svh;
+    }
+
+    .game-header {
+        min-height: 58px;
+        padding: 8px 12px;
+    }
+
+    .game-header h1 {
+        display: flex;
+        align-items: center;
+        font-size: 1.15rem;
+        white-space: nowrap;
+    }
+
+    .brand-icon {
+        width: 26px;
+        height: 26px;
+        margin-right: 5px;
+    }
+
+    .back-button {
+        padding: 7px 5px;
+        font-size: 0.95rem;
+    }
+
+    .header-reset-btn {
+        padding: 7px 9px;
+        font-size: 0.82rem;
+    }
+
+    .input-section,
+    .guesses-section,
+    .suggestions-section,
+    .quick-actions {
+        padding: 22px 16px;
+    }
+
+    .input-title {
+        margin-bottom: 16px;
+    }
+
+    .input-title h2 {
+        font-size: 1.15rem;
+    }
+
+    #guessInput {
+        min-width: 0;
+        padding: 14px 8px;
+        font-size: 1rem;
+        letter-spacing: 2px;
+    }
+
+    .feedback-grid {
+        display: grid;
+        width: min(100%, 294px);
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 6px;
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    .feedback-cell {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1;
+    }
+
+    .feedback-legend {
+        flex-wrap: wrap;
+        gap: 8px 14px;
+        margin-bottom: 20px;
+        font-size: 0.8rem;
+    }
+
+    .suggestions-container {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .suggestion-item {
+        min-width: 0;
+        padding: 13px 7px;
+        font-size: 0.92rem;
+    }
+
+    .suggestion-indicator,
+    .suggestion-indicator .wordle-icon {
+        width: 19px;
+        height: 19px;
+        flex-basis: 19px;
+    }
+
+    .toggle-words-btn,
+    .toggle-help-btn {
+        padding: 17px 16px;
+    }
+
+    .quick-actions {
+        gap: 10px;
+    }
+
+    .quick-action-btn {
+        min-width: 0;
+        padding: 14px 10px;
+    }
+
+    .help-content,
+    .words-container {
+        padding: 18px 16px;
+    }
+}
+
+@media (max-width: 350px) {
+    .game-header h1 {
+        font-size: 1rem;
+    }
+
+    .brand-icon {
+        display: none;
+    }
+
+    .suggestions-container {
+        grid-template-columns: 1fr;
+    }
+
+    .word-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Laptop and desktop landing page */
+@media (min-width: 960px) {
+    .landing-page {
+        min-height: 100svh;
+        padding: 32px;
+    }
+
+    .landing-container {
+        display: grid;
+        width: min(100%, 1120px);
+        max-width: 1120px;
+        min-height: min(680px, calc(100svh - 64px));
+        grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.75fr);
+        gap: 44px;
+        align-items: center;
+        padding: 40px 44px;
+    }
+
+    .hero-section .logo img {
+        height: 3.75rem !important;
+    }
+
+    .hero-title {
+        font-size: clamp(2.75rem, 4vw, 3.5rem);
+    }
+
+    .hero-subtitle {
+        margin-bottom: 22px;
+    }
+
+    .features {
+        margin: 24px 0;
+    }
+
+    .start-button {
+        margin: 20px 0;
+    }
+
+    .instructions-preview {
+        margin-top: 20px;
+    }
+
+    .demo-section {
+        margin: 0;
+        padding: 28px 0 28px 40px;
+        border-top: 0;
+        border-left: 1px solid var(--line);
+    }
+
+    /* Laptop and desktop solver workspace */
+    .game-page {
+        min-height: 100svh;
+        padding: 24px;
+    }
+
+    .game-container {
+        display: grid;
+        width: min(100%, 1180px);
+        max-width: 1180px;
+        min-height: calc(100svh - 48px);
+        grid-template-columns: minmax(360px, 0.9fr) minmax(0, 1.35fr);
+        grid-template-areas:
+            "header header"
+            "input suggestions"
+            "guesses suggestions"
+            "possible possible"
+            "actions help";
+        grid-template-rows: auto auto auto auto auto;
+        align-content: start;
+        border: 1px solid var(--line);
+    }
+
+    .game-header {
+        grid-area: header;
+    }
+
+    .input-section {
+        grid-area: input;
+        border-right: 1px solid var(--soft-line);
+    }
+
+    .guesses-section {
+        grid-area: guesses;
+        height: 100%;
+        border-right: 1px solid var(--soft-line);
+    }
+
+    .suggestions-section {
+        grid-area: suggestions;
+        height: 100%;
+        min-height: 430px;
+        border-bottom: 1px solid var(--soft-line);
+    }
+
+    .possible-words-section {
+        grid-area: possible;
+    }
+
+    .quick-actions {
+        grid-area: actions;
+        align-self: start;
+        border-right: 1px solid var(--soft-line);
+    }
+
+    .help-section {
+        grid-area: help;
+        align-self: start;
+    }
+
+    #guessInput {
+        font-size: 1.05rem;
+        letter-spacing: 2px;
+    }
+
+    .suggestions-container {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .word-grid {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+
+    .words-container {
+        max-height: min(420px, 50vh);
     }
 }

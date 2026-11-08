@@ -71,7 +71,7 @@
         <!-- Suggestions Section -->
         <div class="suggestions-section">
             <h3>Smart Suggestions (<span id="wordCount">0</span> possible)</h3>
-            <p class="suggestions-subtitle">Ranked by information gained. 🔎 marks an exploratory guess that may not be a possible answer.</p>
+            <p class="suggestions-subtitle">Ranked by information gained. The magnifier tile marks an exploratory guess that may not be a possible answer.</p>
             <div id="suggestionsContainer" class="suggestions-container">
                 <div class="loading">Loading suggestions...</div>
             </div>
@@ -91,11 +91,15 @@
         <!-- Quick Actions -->
         <div class="quick-actions">
             <button id="quickResetBtn" class="quick-action-btn">
-                <span class="action-icon">🔄</span>
+                <span class="action-icon">
+                    <img class="wordle-icon" src="assets/icons/new-game.svg" alt="" />
+                </span>
                 <span>New Game</span>
             </button>
             <a href="index.html" class="quick-action-btn">
-                <span class="action-icon">🏠</span>
+                <span class="action-icon">
+                    <img class="wordle-icon" src="assets/icons/home.svg" alt="" />
+                </span>
                 <span>Home</span>
             </a>
         </div>
@@ -122,7 +126,12 @@
                     </div>
                     <div class="help-step">
                         <div class="step-number">4</div>
-                        <div class="step-text">Pick from smart suggestions (🔎 = information guess, 📅 = past answer, 🚀 = popular starting word)</div>
+                        <div class="step-text suggestion-key">
+                            <span>Pick from smart suggestions:</span>
+                            <span><img class="wordle-icon" src="assets/icons/explore.svg" alt="" /> information guess</span>
+                            <span><img class="wordle-icon" src="assets/icons/past.svg" alt="" /> past answer</span>
+                            <span><img class="wordle-icon" src="assets/icons/opening.svg" alt="" /> opening word</span>
+                        </div>
                     </div>
                 </div>
             </div>

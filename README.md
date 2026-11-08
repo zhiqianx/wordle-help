@@ -45,10 +45,10 @@ Everything runs in the browser. The project uses plain HTML, CSS, and JavaScript
 
 | Label | Meaning |
 | --- | --- |
-| 🚀 | Curated opening word |
-| ⭐ | Possible word with five unique letters |
-| 🔎 | Exploratory guess selected primarily for information gain |
-| 📅 | Previously used Wordle answer |
+| Up-arrow tile | Curated opening word |
+| Five-bar tile | Possible word with five unique letters |
+| Magnifier tile | Exploratory guess selected primarily for information gain |
+| Calendar tile | Previously used Wordle answer |
 
 Suggestions are not always predicted answers. An exploratory guess may be recommended because its letters separate the remaining candidates more efficiently.
 
@@ -82,7 +82,8 @@ Browser
 │   ├── starting-words.json       Curated opening guesses
 │   └── valid-wordle-words.txt    Source-format word list
 ├── assets/
-│   └── icon.png                  Application icon
+│   ├── icon.png                  Application icon
+│   └── icons/                    Reusable Wordle-style SVG interface icons
 └── scripts/
     ├── serve_verbose.py          Local static server helper
     └── trans.py                  Word-list conversion utility

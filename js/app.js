@@ -216,6 +216,12 @@ class WordleHelper {
         }
     }
 
+    getSuggestionIcon(name, label) {
+        return `<span class="suggestion-indicator" aria-label="${label}" title="${label}">
+            <img class="wordle-icon" src="assets/icons/${name}.svg" alt="">
+        </span>`;
+    }
+
     async addGuess() {
         const word = this.guessInput.value.toLowerCase();
         const feedback = [...this.currentFeedback];
@@ -650,16 +656,16 @@ class WordleHelper {
                 let extraClass = '';
                 
                 if (isStartingWord) {
-                    indicator = '<span class="starting-indicator">🚀</span>';
+                    indicator = this.getSuggestionIcon('opening', 'Curated opening word');
                     extraClass = 'starting-word';
                 } else if (!isPossibleAnswer) {
-                    indicator = '<span class="exploratory-indicator">🔎</span>';
+                    indicator = this.getSuggestionIcon('explore', 'Information-gain guess');
                     extraClass = 'exploratory-word';
                 } else if (isPastWord) {
-                    indicator = '<span class="past-indicator">📅</span>';
+                    indicator = this.getSuggestionIcon('past', 'Past Wordle answer');
                     extraClass = 'past-word';
                 } else if (hasUniqueLetters) {
-                    indicator = '<span class="unique-indicator">⭐</span>';
+                    indicator = this.getSuggestionIcon('unique', 'Five unique letters');
                     extraClass = 'unique-letters';
                 }
                 
