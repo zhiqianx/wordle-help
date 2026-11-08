@@ -34,7 +34,7 @@
                 <input type="text" id="guessInput" placeholder="type 5-letter word here" maxlength="5" autocomplete="off">
             </div>
 
-            <p class="color-subtitle">Tap to change color</p>
+            <p class="color-subtitle">Tap each tile to match Wordle's colors</p>
 
             <div class="feedback-grid" id="feedbackGrid">
                 <div class="feedback-cell" data-index="0"></div>
@@ -111,23 +111,28 @@
                 <span class="toggle-icon">▼</span>
             </button>
             <div id="helpContent" class="help-content" style="display: none;">
+                <p class="help-intro">Use this helper alongside the NYT Wordle game:</p>
                 <div class="help-steps">
                     <div class="help-step">
                         <div class="step-number">1</div>
-                        <div class="step-text">Type your 5-letter Wordle guess</div>
+                        <div class="step-text">Play a five-letter word in Wordle</div>
                     </div>
                     <div class="help-step">
                         <div class="step-number">2</div>
-                        <div class="step-text">Tap each letter to match Wordle's colors</div>
+                        <div class="step-text">Enter that exact word above</div>
                     </div>
                     <div class="help-step">
                         <div class="step-number">3</div>
-                        <div class="step-text">Tap "Add Guess" to filter words</div>
+                        <div class="step-text">Match the green, yellow, and gray tiles from Wordle, then select “Add Guess”</div>
                     </div>
                     <div class="help-step">
                         <div class="step-number">4</div>
+                        <div class="step-text">Play a suggested word in Wordle, then repeat with the new colors</div>
+                    </div>
+                    <div class="help-step suggestion-legend-step">
+                        <div class="step-number" aria-hidden="true">?</div>
                         <div class="step-text suggestion-key">
-                            <span>Pick from smart suggestions:</span>
+                            <span>Suggestion labels:</span>
                             <span><img class="wordle-icon" src="assets/icons/explore.svg" alt="" /> information guess</span>
                             <span><img class="wordle-icon" src="assets/icons/past.svg" alt="" /> past answer</span>
                             <span><img class="wordle-icon" src="assets/icons/opening.svg" alt="" /> opening word</span>

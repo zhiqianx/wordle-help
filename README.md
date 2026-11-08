@@ -31,15 +31,15 @@ Everything runs in the browser. The project uses plain HTML, CSS, and JavaScript
 
 ## How to Use
 
-1. Open the [live app](https://zhiqianx.github.io/wordle-help/) and select **Start Solving**.
-2. Enter the five-letter word you played in Wordle.
-3. Tap each letter until its color matches Wordle:
+1. Keep the NYT Wordle game and [Wordle Helper](https://zhiqianx.github.io/wordle-help/) open.
+2. Play a five-letter word in Wordle.
+3. Enter that exact word in the helper.
+4. Tap each letter until its color matches Wordle:
    - 🟩 **Green** — correct letter and position
    - 🟨 **Yellow** — correct letter, wrong position
    - ⬜ **Gray** — letter is not present in that occurrence
-4. Select **Add Guess**.
-5. Choose a suggested next guess or inspect the complete filtered word list.
-6. Repeat until the answer is determined.
+5. Select **Add Guess**, then play one of the suggested words in Wordle.
+6. Enter the new colors in the helper and repeat.
 
 ### Suggestion Labels
 
