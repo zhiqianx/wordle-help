@@ -6,22 +6,19 @@
     <title>Wordle Helper</title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/png" sizes="32x32" href="icon.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="icon.png">
-    <link rel="apple-touch-icon" href="icon.png">
-    
-    <link rel="stylesheet" href="style.css">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/icon.png">
+    <link rel="apple-touch-icon" href="assets/icon.png">
+    <meta name="description" content="Use Wordle Helper to filter possible answers from your guesses and feedback.">
     <title>Wordle Helper - Game</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body class="game-page">
     <div class="game-container">
         <!-- Header with back button -->
         <header class="game-header">
             <a href="index.html" class="back-button">← Back</a>
-            <h1> <img src="icon.png" alt="Wordle Icon" style="height: 3em; vertical-align: middle;" />
+            <h1><img class="brand-icon" src="assets/icon.png" alt="Wordle Helper logo" />
                  Wordle Helper</h1>
             <button id="resetBtn" class="header-reset-btn">Reset</button>
         </header>
@@ -74,7 +71,7 @@
         <!-- Suggestions Section -->
         <div class="suggestions-section">
             <h3>Smart Suggestions (<span id="wordCount">0</span> possible)</h3>
-            <p class="suggestions-subtitle">Tap to enter the word. Words with unique letters shown first, past answers shown last for better strategy</p>
+            <p class="suggestions-subtitle">Ranked by information gained. 🔎 marks an exploratory guess that may not be a possible answer.</p>
             <div id="suggestionsContainer" class="suggestions-container">
                 <div class="loading">Loading suggestions...</div>
             </div>
@@ -125,13 +122,14 @@
                     </div>
                     <div class="help-step">
                         <div class="step-number">4</div>
-                        <div class="step-text">Pick from smart suggestions (⭐ = unique letters, 📅 = past answer, 🚀 = popular starting word for better strategy)</div>
+                        <div class="step-text">Pick from smart suggestions (🔎 = information guess, 📅 = past answer, 🚀 = popular starting word)</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="js/wordle-solver.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
